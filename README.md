@@ -20,3 +20,29 @@ A median is defined as a number separating the higher half of a data set from th
 
 **Answer**
 Select round(St.LAT_N,4) mediam from station St where (select count(Lat_N) from station where Lat_N < St.LAT_N ) = (select count(Lat_N) from station where Lat_N > St.LAT_N)
+
+**Q:Asian Countries**
+
+Given the CITY and COUNTRY tables, query the sum of the populations of all cities where the CONTINENT is 'Asia'.
+
+**Answer**
+
+SELECT SUM(City.population) FROM Country INNER JOIN City  ON Country.Code = City.CountryCode WHERE Country.Continent='Asia';
+
+**Q:Placement**
+
+You are given three tables: Students, Friends and Packages. Students contains two columns: ID and Name. Friends contains two columns: ID and Friend_ID (ID of the ONLY best friend). Packages contains two columns: ID and Salary (offered salary in $ thousands per month).
+
+**Answer**
+
+Select S.Name From ( Students S join Friends F using(ID) join Packages P1 on S.ID=P1.ID join Packages P2 on F.Friend_ID=P2.ID) Where P2.Salary > P1.Salary Order By P2.Salary
+
+**Q:Interview**
+
+Samantha interviews many candidates from different colleges using coding challenges and contests. Write a query to print the contest_id, hacker_id, name, and the sums of total_submissions, total_accepted_submissions, total_views, and total_unique_views for each contest sorted by contest_id. Exclude the contest from the result if all four sums are .
+
+Note: A specific contest can be used to screen candidates at more than one college, but each college only holds  screening contest.
+
+**Answer**
+
+SELECT con.contest_id, con.hacker_id, con.name, SUM(sg.total_submissions), SUM(sg.total_accepted_submissions), SUM(vg.total_views), SUM(vg.total_unique_views) FROM Contests AS con JOIN Colleges AS col ON con.contest_id = col.contest_id JOIN Challenges AS cha ON cha.college_id = col.college_id LEFT JOIN (SELECT ss.challenge_id, SUM(ss.total_submissions) AS total_submissions, SUM(ss.total_accepted_submissions) AS total_accepted_submissions FROM  Submission_Stats AS ss GROUP BY ss.challenge_id) AS sg ON cha.challenge_id = sg.challenge_id LEFT JOIN (SELECT vs.challenge_id, SUM(vs.total_views) AS total_views, SUM(total_unique_views) AS total_unique_views FROM View_Stats AS vs GROUP BY vs.challenge_id) AS vg ON cha.challenge_id = vg.challenge_id GROUP BY con.contest_id, con.hacker_id, con.name HAVING SUM(sg.total_submissions)+       SUM(sg.total_accepted_submissions)+       SUM(vg.total_views)+       SUM(vg.total_unique_views) > 0 ORDER BY con.contest_id;
