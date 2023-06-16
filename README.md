@@ -124,3 +124,19 @@ FROM OCCUPATIONS
 ORDER BY NAME ASC;
 
 select CONCAT("There are a total of", " ",COUNT(occupation), " ",LCASE(occupation),"s",".")AS stat from OCCUPATIONS group by occupation order by COUNT(occupation) ASC,occupation
+
+**Q:Hacker Rank SQl(Basic Question)country-codes.sql**
+
+**Answer**
+SELECT a.customer_id,a.name,concat("+",b.country_code,a.phone_number) FROM customers as a LEFT join country_codes as b ON a.country=b.country ORDER BY a.customer_id;
+
+**Q:profitable-stocks**
+
+**Answer**
+
+SELECT a.stock_code FROM price_today a INNER JOIN price_tomorrow b ON a.stock_code = b.stock_code WHERE b.price>a.price ORDER BY stock_code asc;
+
+**Q:student-advisor**
+
+**Answer**
+SELECT roll_number,name FROM student_information a INNER JOIN faculty_information b ON a.advisor = b.employee_ID WHERE (b.gender = 'M' and b.salary>15000) or (b.gender = 'F' and b.salary>20000);
