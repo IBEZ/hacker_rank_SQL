@@ -58,3 +58,16 @@ The total score of a hacker is the sum of their maximum scores for all of the ch
 SELECT con.contest_id, con.hacker_id, con.name, SUM(sg.total_submissions), SUM(sg.total_accepted_submissions),
 SUM(vg.total_views), SUM(vg.total_unique_views) FROM Contests AS con JOIN Colleges AS col ON con.contest_id = col.contest_id
 JOIN Challenges AS cha ON cha.college_id = col.college_id LEFT JOIN (SELECT ss.challenge_id, SUM(ss.total_submissions) AS total_submissions, SUM(ss.total_accepted_submissions) AS total_accepted_submissions FROM Submission_Stats AS ss GROUP BY ss.challenge_id) AS sg ON cha.challenge_id = sg.challenge_id LEFT JOIN (SELECT vs.challenge_id, SUM(vs.total_views) AS total_views, SUM(total_unique_views) AS total_unique_views FROM View_Stats AS vs GROUP BY vs.challenge_id) AS vg ON cha.challenge_id = vg.challenge_id GROUP BY con.contest_id, con.hacker_id, con.name HAVING SUM(sg.total_submissions)+  SUM(sg.total_accepted_submissions)+ SUM(vg.total_views)+ SUM(vg.total_unique_views) > 0 ORDER BY con.contest_id;
+
+
+**Q:Symmetric-Pairs**
+
+You are given a table, Functions, containing two columns: X and Y.
+
+Two pairs (X1, Y1) and (X2, Y2) are said to be symmetric pairs if X1 = Y2 and X2 = Y1.
+
+Write a query to output all such symmetric pairs in ascending order by the value of X. List the rows such that X1 ≤ Y1.
+
+**Answer**
+
+SELECT f1.X, f1.Y FROM Functions AS f1 WHERE f1.X = f1.Y AND (SELECT COUNT(*) FROM Functions WHERE X = f1.X AND Y = f1.Y) > 1 UNION SELECT f1.X, f1.Y from Functions AS f1 WHERE EXISTS(SELECT X, Y FROM Functions WHERE f1.X = Y AND f1.Y = X AND f1.X < X) ORDER BY X;
