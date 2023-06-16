@@ -71,3 +71,56 @@ Write a query to output all such symmetric pairs in ascending order by the value
 **Answer**
 
 SELECT f1.X, f1.Y FROM Functions AS f1 WHERE f1.X = f1.Y AND (SELECT COUNT(*) FROM Functions WHERE X = f1.X AND Y = f1.Y) > 1 UNION SELECT f1.X, f1.Y from Functions AS f1 WHERE EXISTS(SELECT X, Y FROM Functions WHERE f1.X = Y AND f1.Y = X AND f1.X < X) ORDER BY X;
+
+**Q:Population**
+
+Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically and displayed underneath its corresponding Occupation. The output column headers should be Doctor, Professor, Singer, and Actor, respectively.
+
+**Answer**
+select
+    Doctor,
+    Professor,
+    Singer,
+    Actor
+from (
+    select
+        NameOrder,
+        max(case Occupation when 'Doctor' then Name end) as Doctor,
+        max(case Occupation when 'Professor' then Name end) as Professor,
+        max(case Occupation when 'Singer' then Name end) as Singer,
+        max(case Occupation when 'Actor' then Name end) as Actor
+    from (
+            select
+                Occupation,
+                Name,
+                row_number() over(partition by Occupation order by Name ASC) as NameOrder
+            from Occupations
+         ) as NameLists
+    group by NameOrder
+    ) as Names
+
+**Q:Binary Tree**
+
+You are given a table, BST, containing two columns: N and P, where N represents the value of a node in Binary Tree, and P is the parent of N.
+
+**Answer**
+
+SELECT N, IF(P IS NULL,"Root",IF((SELECT COUNT(*) FROM BST WHERE P=B.N)>0,"Inner","Leaf")) FROM BST AS B ORDER BY N;
+
+**Q:The Pads**
+
+Generate the following two result sets:
+Query an alphabetically ordered list of all names in OCCUPATIONS, immediately followed by the first letter of each profession as a parenthetical (i.e.: enclosed in parentheses). For example: AnActorName(A), ADoctorName(D), AProfessorName(P), and ASingerName(S).
+Query the number of ocurrences of each occupation in OCCUPATIONS. Sort the occurrences in ascending order, and output them in the following format:
+There are a total of [occupation_count] [occupation]s.
+where [occupation_count] is the number of occurrences of an occupation in OCCUPATIONS and [occupation] is the lowercase occupation name. If more than one Occupation has the same [occupation_count], they should be ordered alphabetically.
+
+Note: There will be at least two entries in the table for each type of occupation.
+
+**Answer**
+
+SELECT concat(NAME,concat("(",LEFT(occupation,1),")")) 
+FROM OCCUPATIONS 
+ORDER BY NAME ASC;
+
+select CONCAT("There are a total of", " ",COUNT(occupation), " ",LCASE(occupation),"s",".")AS stat from OCCUPATIONS group by occupation order by COUNT(occupation) ASC,occupation
